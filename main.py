@@ -25,6 +25,16 @@ def health_check():
         )
 
 
+@app.get("/ready")
+def ready_check():
+    try:
+        s3.list_objects_v2(Bucket=BUCKET, Prefix=PREFIX, MaxKeys=1)
+        return {"status": "ready", "s3": "ok"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 @app.get("/serving/latest")
 def get_serving_parquet():
     try:
