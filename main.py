@@ -1,8 +1,15 @@
 from fastapi import FastAPI, HTTPException
 import boto3
+from botocore.config import Config
+
 
 app = FastAPI()
-s3 = boto3.client("s3")
+# s3 = boto3.client("s3")
+s3 = boto3.client(
+    "s3",
+    region_name="us-east-2",
+    config=Config(signature_version="s3v4")
+)
 
 BUCKET = "opera-hotel"
 PREFIX = "serving/2026-04/"
