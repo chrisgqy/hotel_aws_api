@@ -1,9 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException
 import boto3
 from botocore.config import Config
 
 
 app = FastAPI()
+router = APIRouter(prefix="/api")
+
+
 # s3 = boto3.client("s3")
 s3 = boto3.client(
     "s3",
@@ -14,7 +17,8 @@ s3 = boto3.client(
 BUCKET = "opera-hotel"
 PREFIX = "serving/2026-04/"
 
-@app.get("/health")
+
+@router.get("/health")
 def health_check():
     try:
         # lightweight S3 check (doesn't list full contents)
@@ -32,7 +36,7 @@ def health_check():
         )
 
 
-@app.get("/ready")
+@router.get("/ready")
 def ready_check():
     try:
         s3.list_objects_v2(Bucket=BUCKET, Prefix=PREFIX, MaxKeys=1)
@@ -42,7 +46,7 @@ def ready_check():
 
 
 
-@app.get("/serving/latest")
+@router.get("/serving/latest")
 def get_serving_parquet():
     try:
         resp = s3.list_objects_v2(Bucket=BUCKET, Prefix=PREFIX)
@@ -87,3 +91,6 @@ def get_serving_parquet():
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+app.include_router(router)
