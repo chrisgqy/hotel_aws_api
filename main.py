@@ -4,7 +4,7 @@ import uvicorn
 from botocore.config import Config
 from fastapi import APIRouter, FastAPI, HTTPException
 
-
+# Configurable via environment variables (kept simple with defaults)
 AWS_REGION = os.getenv("AWS_REGION", "us-east-2")
 S3_BUCKET = os.getenv("S3_BUCKET", "opera-hotel")
 S3_PREFIX = os.getenv("S3_PREFIX", "serving/2026-04/")
@@ -20,6 +20,7 @@ app = FastAPI(
 
 router = APIRouter(prefix="/api")
 
+# Single S3 client reused across requests
 s3 = boto3.client(
     "s3",
     region_name=AWS_REGION,
@@ -104,7 +105,8 @@ def get_latest_serving_parquet():
                     "Please keep only one serving parquet file or update the API logic."
                 ),
             )
-
+        
+        # Generate temporary download URL (default 5 min)
         parquet_file = parquet_files[0]
         parquet_key = parquet_file["Key"]
 
@@ -137,6 +139,7 @@ app.include_router(router)
 
 
 if __name__ == "__main__":
+    # Local dev entrypoint (Docker uses uvicorn directly)
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
