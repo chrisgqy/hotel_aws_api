@@ -8,6 +8,7 @@ from fastapi import APIRouter, FastAPI, HTTPException
 AWS_REGION = os.getenv("AWS_REGION", "us-east-2")
 S3_BUCKET = os.getenv("S3_BUCKET", "opera-hotel")
 S3_PREFIX = os.getenv("S3_PREFIX", "serving/2026-04/")
+S3_REGION = os.getenv("S3_REGION", "us-east-2")
 PRESIGNED_URL_EXPIRES_SECONDS = int(
     os.getenv("PRESIGNED_URL_EXPIRES_SECONDS", "300")
 )
@@ -23,7 +24,7 @@ router = APIRouter(prefix="/api")
 # Single S3 client reused across requests
 s3 = boto3.client(
     "s3",
-    region_name=AWS_REGION,
+    region_name=S3_REGION,
     config=Config(signature_version="s3v4"),
 )
 
