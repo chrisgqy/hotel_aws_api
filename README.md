@@ -108,7 +108,7 @@ For Git Bash on Windows:
 ```bash
 MSYS_NO_PATHCONV=1 docker run --rm \
   -p 8000:8000 \
-  --mount type=bind,src=/c/Users/CGao/.aws,dst=/aws,readonly \
+  --mount type=bind,src=/<your_root_folder>/.aws,dst=/aws,readonly \
   -e AWS_SHARED_CREDENTIALS_FILE=/aws/credentials \
   -e AWS_CONFIG_FILE=/aws/config \
   -e AWS_REGION=us-east-2 \
@@ -176,7 +176,7 @@ On EC2, use the instance IAM role instead of mounting local `.aws` credentials.
 
 - Exactly one `.parquet` file exists under the configured S3 prefix
 - The EC2 instance or local user has permission to read the S3 bucket
-- The API currently returns a temporary presigned URL only
+- The API currently returns a temporary gpresigned URL only
 
 ## Future improvements
 
